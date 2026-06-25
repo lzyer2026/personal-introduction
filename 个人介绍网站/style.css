@@ -1,0 +1,178 @@
+ /* ============================================================
+    style.css — 自定义样式
+    本文件包含 Tailwind 无法直接实现的动画、滚动条、交互效果等
+    ============================================================ */
+ 
+ /* ========== 基础重置与字体 ========== */
+ *,
+ *::before,
+ *::after {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+ }
+ 
+ html {
+     /* 全局平滑滚动 */
+     scroll-behavior: smooth;
+ }
+ 
+ body {
+     /* 字体优先级：Inter（英文）→ 系统中文字体 → 兜底无衬线 */
+     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+         'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+     min-width: 1024px;
+ }
+ 
+ /* ========== 自定义滚动条 ========== */
+ ::-webkit-scrollbar {
+     width: 8px;
+ }
+ ::-webkit-scrollbar-track {
+     background: #0a1929;
+ }
+ ::-webkit-scrollbar-thumb {
+     background: #1a2d4a;
+     border-radius: 4px;
+     transition: background 0.3s;
+ }
+ ::-webkit-scrollbar-thumb:hover {
+     background: #3b82f6;
+ }
+ 
+ /* ========== 选中文本颜色 ========== */
+ ::selection {
+     background: rgba(59, 130, 246, 0.3);
+     color: #e2e8f0;
+ }
+ 
+ /* ============================================================ */
+ /*    导航栏滚动状态                                              */
+ /*    当页面滚动超过 100px 时，JS 添加 .scrolled 类                */
+ /* ============================================================ */
+ #navbar.scrolled {
+     /* 半透明深色背景 + 毛玻璃效果 */
+     background-color: rgba(10, 25, 41, 0.92);
+     backdrop-filter: blur(12px);
+     -webkit-backdrop-filter: blur(12px);
+     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+ }
+ 
+ /* ============================================================ */
+ /*    页面元素渐入动画（fadeInUp）                                  */
+ /*    使用 IntersectionObserver 在元素进入视口时触发 .visible      */
+ /* ============================================================ */
+ .fade-in {
+     opacity: 0;
+     transform: translateY(40px);
+     transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+ }
+ .fade-in.visible {
+     opacity: 1;
+     transform: translateY(0);
+ }
+ 
+ /* ============================================================ */
+ /*    卡片 hover 上浮效果                                         */
+ /*    应用于项目卡片、技能卡片、数据统计卡片等                     */
+ /* ============================================================ */
+ .card-hover {
+     transition: transform 0.35s ease, box-shadow 0.35s ease;
+     will-change: transform;
+ }
+ .card-hover:hover {
+     transform: translateY(-6px);
+     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+ }
+ 
+ /* ============================================================ */
+ /*    Hero 背景动画                                              */
+ /*    两层径向渐变 + CSS 动画，产生呼吸般的脉动效果              */
+ /* ============================================================ */
+ .hero-bg {
+     position: relative;
+     background: linear-gradient(135deg, #0a1929 0%, #0f2847 50%, #0a1929 100%);
+     background-size: 200% 200%;
+     animation: gradientShift 15s ease infinite;
+ }
+ 
+ @keyframes gradientShift {
+     0%   { background-position: 0% 50%; }
+     50%  { background-position: 100% 50%; }
+     100% { background-position: 0% 50%; }
+ }
+ 
+ /* 技术感网格叠加层 */
+ .hero-grid {
+     position: absolute;
+     inset: 0;
+     z-index: 0;
+     pointer-events: none;
+     /* 通过重复透明线条模拟网格 */
+     background-image:
+         linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+         linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+     background-size: 60px 60px;
+ }
+ 
+ /* Hero 额外径向渐变光晕（随动画缓慢移动） */
+ .hero-bg::before {
+     content: '';
+     position: absolute;
+     inset: 0;
+     z-index: 0;
+     background:
+         radial-gradient(circle at 25% 40%, rgba(59, 130, 246, 0.10) 0%, transparent 50%),
+         radial-gradient(circle at 75% 60%, rgba(96, 165, 250, 0.06) 0%, transparent 50%);
+     animation: heroPulse 10s ease-in-out infinite alternate;
+     pointer-events: none;
+ }
+ 
+ @keyframes heroPulse {
+     0%   { transform: scale(1);   opacity: 0.6; }
+     100% { transform: scale(1.15); opacity: 1;   }
+ }
+ 
+ /* 确保 Hero 内的文字在装饰层之上 */
+ .hero-bg > .relative {
+     z-index: 1;
+ }
+ 
+ /* ============================================================ */
+ /*    表单输入框焦点样式                                          */
+ /* ============================================================ */
+ input:focus,
+ textarea:focus {
+     outline: none;
+     border-color: #3b82f6;
+     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+ }
+ 
+ /* ============================================================ */
+ /*    项目卡片图片区微动效                                        */
+ /*    鼠标悬停时图标略微放大                                     */
+ /* ============================================================ */
+ .project-card:hover svg {
+     transform: scale(1.1);
+     transition: transform 0.35s ease;
+ }
+ 
+ /* ============================================================ */
+ /*    回到顶部按钮悬浮效果                                        */
+ /*    opacity 和 visible 由 JS 控制                              */
+ /* ============================================================ */
+ #back-to-top {
+     cursor: pointer;
+     transition: opacity 0.4s ease, visibility 0.4s ease, background-color 0.3s ease;
+ }
+ 
+ /* ============================================================ */
+ /*    技能卡片悬浮边框微亮效果                                    */
+ /* ============================================================ */
+ .skill-card {
+     border: 1px solid transparent;
+     transition: border-color 0.3s ease, transform 0.35s ease, box-shadow 0.35s ease;
+ }
+ .skill-card:hover {
+     border-color: rgba(59, 130, 246, 0.25);
+ }
